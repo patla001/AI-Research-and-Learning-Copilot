@@ -53,8 +53,9 @@ server.
 | `GET content.openalex.org/works/{id}.grobid-xml` | 100 | **Key required** (401 without one) |
 
 The numbers come from the `X-RateLimit-Credits-Used` header on live calls. Without a
-key the budget is 1,000 credits per day; a free key raises it to 100,000. That shaped
-three choices:
+key the budget is 1,000 credits per day. With the free key the live `X-RateLimit-Limit`
+header read 10,000, which is about 100 full-text downloads a day. That shaped these
+choices:
 
 - **Search results are not stored.** Discovery has no side effects. Only saving a
   paper writes rows.
@@ -167,7 +168,7 @@ A manual tool-use loop (`agent.py`) over 11 tools (`agent_tools.py`), on `claude
 
 | Check | Result |
 |---|---|
-| `pytest`: OpenAlex normalization on a live-response fixture, TEI parsing, chunking, plan ordering, next-paper logic, diversification, citation validation, tool schemas | **29 passed** |
+| `pytest`: OpenAlex normalization on a live-response fixture, TEI parsing, chunking, plan ordering, next-paper logic, diversification, citation validation, tool schemas | **30 passed** |
 | `test_deployment.py` against the app on Postgres 16 + pgvector 0.8 (Docker): every write checked through the API **and** in SQL, idempotent re-import, plan persistence, progress, scoped retrieval, note retrieval, cross-user isolation, edge cases | **44 passed, 0 failed** |
 | `scripts/agent_loop_smoke.py`: the real agent loop against a stub Messages API and the local database. Checks the fallback header and body, thinking, effort, cache markers, byte-stable tools, `tool_result` round trip, thinking echo, verified vs. invented citations | **20 passed, 0 failed** |
 
@@ -180,14 +181,18 @@ extension, schema and secret. See [DEPLOY.md](DEPLOY.md).
 | Check | Result |
 |---|---|
 | `test_deployment.py` against the local app on **Lakebase** `copilot-db` (TLS, `copilot_app` role) | **44 passed, 0 failed** |
-| `test_deployment.py https://research-copilot-2808874854650870.aws.databricksapps.com --chat`: the full suite through the Databricks OAuth proxy, identity from `X-Forwarded-Email`, **plus a real Claude request** | **45 passed, 0 failed**. The agent called `retrieve_evidence`, and its answer carried 5 verified citations and 0 unverified |
+| `test_deployment.py https://research-copilot-2808874854650870.aws.databricksapps.com --chat`: the full suite through the Databricks OAuth proxy, identity from `X-Forwarded-Email`, **plus a real Claude request and an open-access full-text import** | **48 passed, 0 failed**. The agent called `retrieve_evidence` and its answer carried only verified citations. W4389984066's full text was fetched and capped at 60,000 characters, stored in `papers.content_text`, and embedded as 40 `content` chunks (the per-paper cap) |
 
 The app is behind Databricks OAuth, so a viewer needs a workspace identity. The
 cross-user isolation checks run locally only, because on Databricks Apps the platform
 sets `X-Forwarded-Email` and a client cannot spoof it.
 
-**Still not verified:** full-text import, which needs `OPENALEX_API_KEY`. Without the
-key the app runs on the keyless OpenAlex budget with abstracts only.
+**Found by deploying:** `content.openalex.org` serves `.grobid-xml` as an
+`application/gzip` attachment (`W….grobid.xml.gz`) with **no** `Content-Encoding`
+header, so nothing decompresses it on the way in. The first full-text import failed
+with `not well-formed (invalid token): line 1, column 0`, after being charged 100
+credits. `openalex_client.decode_content` now gunzips on the gzip magic number, and
+`tests/test_pure_logic.py` covers gzipped, plain and corrupt bodies.
 
 ---
 

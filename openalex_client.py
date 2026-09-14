@@ -262,7 +262,10 @@ class OpenAlexClient:
             )
         if response.status_code >= 400:
             raise OpenAlexError(f"OpenAlex returned HTTP {response.status_code}.")
-        return response.json() if expect_json else response.text
+        # Non-JSON bodies come back as raw bytes: content downloads are gzip
+        # files, and response.text would decode compressed bytes as if they
+        # were UTF-8 text.
+        return response.json() if expect_json else response.content
 
     def _record_usage(self, response) -> None:
         headers = response.headers
@@ -349,9 +352,29 @@ class OpenAlexClient:
         if not self.api_key:
             return None
         work_id = normalize_work_id(work_id)
-        xml_text = self._get(f"{CONTENT_BASE}/works/{work_id}.grobid-xml", expect_json=False)
-        text, truncated = tei_to_text(xml_text)
+        raw = self._get(f"{CONTENT_BASE}/works/{work_id}.grobid-xml", expect_json=False)
+        text, truncated = tei_to_text(decode_content(raw))
         return (text, truncated) if text else None
+
+
+def decode_content(raw: bytes) -> str:
+    """Turn a content download into XML text, decompressing when needed.
+
+    Measured on the live endpoint: `.grobid-xml` arrives as
+    `application/gzip` with `Content-Disposition: ...grobid.xml.gz` and no
+    Content-Encoding header - so neither requests nor any proxy decompresses
+    it. Parsing those bytes directly fails at line 1, column 0. The gzip magic
+    number decides, so an uncompressed response keeps working too.
+    """
+    import gzip
+    import zlib
+
+    if raw[:2] == b"\x1f\x8b":
+        try:
+            raw = gzip.decompress(raw)
+        except (OSError, EOFError, zlib.error) as err:
+            raise OpenAlexError(f"Full text download was a corrupt gzip file: {err}") from err
+    return raw.decode("utf-8", errors="replace")
 
 
 def _int_or_none(value):

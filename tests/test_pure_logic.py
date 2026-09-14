@@ -93,6 +93,21 @@ def test_tei_to_text_keeps_heads_and_paragraphs_skips_bibliography():
     assert len(short) == 10 and truncated
 
 
+def test_decode_content_handles_gzip_and_plain_bytes():
+    """content.openalex.org serves .grobid-xml as application/gzip with no
+    Content-Encoding header, so nothing upstream decompresses it for us."""
+    import gzip
+
+    from openalex_client import decode_content
+
+    xml = '<TEI xmlns="http://www.tei-c.org/ns/1.0"><text><body><div><p>Café</p></div></body></text></TEI>'
+    assert decode_content(gzip.compress(xml.encode("utf-8"))) == xml
+    assert decode_content(xml.encode("utf-8")) == xml
+    assert tei_to_text(decode_content(gzip.compress(xml.encode("utf-8"))))[0] == "Café"
+    with pytest.raises(OpenAlexError):
+        decode_content(b"\x1f\x8b\x08corrupt")
+
+
 # ---------------------------------------------------------------------------
 # chunking
 # ---------------------------------------------------------------------------

@@ -121,8 +121,10 @@ def main(base: str, run_chat: bool) -> int:
 
     r = s.post(f"{base}/papers/import", json={"paper_ids": ids, "fetch_content": False}, timeout=300)
     dupes = sql_one("SELECT COUNT(*) - COUNT(DISTINCT id) AS n FROM papers")["n"]
+    # Paper text only: notes also carry a paper_id, and two notes on one paper
+    # legitimately share (paper_id, 'note', chunk_index 0).
     chunk_dupes = sql_one("""SELECT COUNT(*) AS n FROM (SELECT paper_id, source_type, chunk_index
-                             FROM context_chunks WHERE paper_id IS NOT NULL
+                             FROM context_chunks WHERE source_type IN ('abstract', 'content')
                              GROUP BY 1,2,3 HAVING COUNT(*) > 1) x""")["n"]
     check(r.status_code == 200 and dupes == 0 and chunk_dupes == 0, "re-import is idempotent",
           f"{dupes} duplicate papers, {chunk_dupes} duplicate chunks")
@@ -130,6 +132,26 @@ def main(base: str, run_chat: bool) -> int:
 
     r = s.get(f"{base}/papers/{ids[0]}", timeout=30)
     check(r.status_code == 200 and js(r).get("authors"), "GET /papers/<id> with authors")
+
+    # -- open-access full text (only with an OpenAlex key on the app) --------
+    # Costs 100 OpenAlex credits for the one paper.
+    openalex = js(s.get(f"{base}/copilot/stats", timeout=60)).get("openalex") or {}
+    with_content = [x["id"] for x in results if x.get("has_content")][:1]
+    if not openalex.get("api_key_configured"):
+        print("[SKIP] full text - OPENALEX_API_KEY is not configured on the app")
+    elif not with_content:
+        print("[SKIP] full text - no search result has OpenAlex full text")
+    else:
+        r = s.post(f"{base}/papers/import", json={"paper_ids": with_content, "fetch_content": True}, timeout=600)
+        content = js(r).get("content") or {}
+        fetched = [c["id"] for c in content.get("fetched") or []]
+        check(r.status_code == 200 and fetched == with_content, "full text fetched with the OpenAlex key",
+              str(content)[:200])
+        chars = sql_one("SELECT length(content_text) AS n FROM papers WHERE id = %s", (with_content[0],)).get("n") or 0
+        check(chars > 1000, "  content_text stored in Lakebase", f"{chars} chars")
+        chunks = sql_one("""SELECT COUNT(*) AS n FROM context_chunks
+                            WHERE paper_id = %s AND source_type = 'content'""", (with_content[0],))["n"]
+        check(chunks > 0, "  full text embedded as content chunks", f"{chunks} chunk(s)")
 
     # -- collection ---------------------------------------------------------
     r = s.post(f"{base}/collections", json={"name": f"RAG basics {run}", "goal_id": goal_id}, timeout=30)

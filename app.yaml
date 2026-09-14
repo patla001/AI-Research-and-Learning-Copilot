@@ -20,11 +20,10 @@ env:
     valueFrom: copilot-lakebase-url
   - name: ANTHROPIC_API_KEY
     valueFrom: anthropic-api-key
-  # Enable once `database/openalex-api-key` exists AND is attached as an app
-  # resource named `openalex-api-key` (DEPLOY.md step 4). Until then the app
-  # runs keyless: 1,000 OpenAlex credits/day and no full-text downloads.
-  # - name: OPENALEX_API_KEY
-  #   valueFrom: openalex-api-key
+  # Requires the `openalex-api-key` app resource (DEPLOY.md step 4). Without it
+  # the app runs keyless: 1,000 OpenAlex credits/day and no full-text downloads.
+  - name: OPENALEX_API_KEY
+    valueFrom: openalex-api-key
 
   - name: LAKEBASE_SECRET_SCOPE
     value: "database"

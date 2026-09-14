@@ -11,11 +11,12 @@ separately. Stop both when you are not using them (see Teardown).
 | Lakebase instance | `copilot-db`: CU_1, PG 16, pgvector 0.8.0, native login on |
 | Instance host | `ep-old-rain-d1mk3m3q.database.us-west-2.cloud.databricks.com` |
 | Postgres role | `copilot_app`, which owns all 10 tables (created by `scripts/bootstrap_lakebase.py`) |
-| Secrets | `database/copilot-lakebase-url`, `database/anthropic-api-key` (`openalex-api-key` not yet created) |
+| Secrets | `database/copilot-lakebase-url`, `database/anthropic-api-key`, `database/openalex-api-key`, each attached as an app resource of the same name |
 | App | `research-copilot` (service principal READ on scope `database`) |
 | App URL | `https://research-copilot-2808874854650870.aws.databricksapps.com` |
-| Deployment | `01f1b047de6d1c519ce0e2e72ff414f6`, SUCCEEDED ("App started successfully") |
-| Verification | `test_deployment.py <url> --chat`: **45 passed, 0 failed**, including a real Claude request with 5 verified citations |
+| Deployment | `01f1b058de2c16a7849a0a02e585523e`, SUCCEEDED ("App started successfully") |
+| Verification | `test_deployment.py <url> --chat`: **48 passed, 0 failed**, including a real Claude request with verified citations and an open-access full-text import (60,000 chars, 40 content chunks) |
+| OpenAlex budget | The free key's `X-RateLimit-Limit` measured **10,000 credits/day**: a search costs 10, a full-text download 100 |
 
 > **Shortcut for steps 1b-3:** once the instance is AVAILABLE,
 > `python scripts/bootstrap_lakebase.py --instance copilot-db --write-env` creates the
