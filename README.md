@@ -1,5 +1,26 @@
 # Reading Route: AI Research and Learning Copilot
 
+**Reading Route turns "I want to learn X" into a reading path through the research.**
+You set a learning goal, and it:
+
+- finds matching papers on **OpenAlex**,
+- saves the ones you pick to **Databricks Lakebase** and embeds them with pgvector,
+- builds a **reading plan** that puts surveys and foundational work before the papers that build on them,
+- **tracks your progress** and recommends what to read next,
+- lets you **ask a Claude-powered copilot** to find, summarize and compare papers. Its answers cite the papers they come from, and every citation is checked.
+
+![Demo: create a goal, find and save papers, build a reading plan, track progress, and ask the copilot](docs/demo.gif)
+
+**Live app:** [research-copilot on Databricks Apps](https://research-copilot-2808874854650870.aws.databricksapps.com)
+
+> The app sits behind Databricks sign-in, so you need an account in the workspace. To keep costs down,
+> the app and its Lakebase instance are stopped between demos. If the link doesn't load, they need to be
+> started again ([DEPLOY.md → Pause and resume](DEPLOY.md#pause-and-resume)).
+
+---
+
+## How it works
+
 A learner names what they want to learn. The app finds papers on OpenAlex and saves
 the useful ones into collections. It sequences them into a reading plan, tracks
 progress, and answers questions about them with citations that are checked against
@@ -60,7 +81,9 @@ choices:
 - **Search results are not stored.** Discovery has no side effects. Only saving a
   paper writes rows.
 - **Full text is fetched on import only**, never for search results, and it is
-  capped at 60,000 characters and 40 chunks per paper.
+  capped at 60,000 characters and 40 chunks per paper. Papers are shared across
+  learners, so text already in Lakebase is reported as `already_stored` and never
+  downloaded (or billed) twice.
 - **Search ranks by relevance upstream, always.** On "retrieval augmented
   generation", OpenAlex's `sort=cited_by_count:desc` put a 2020 cognitive-science
   preprint and a 2016 walking-route paper in the top two, with or without a quoted
@@ -216,6 +239,7 @@ for f in sql/01_schema.sql sql/02_context_chunks.sql; do
 .venv/bin/python test_deployment.py http://localhost:8000 # end to end
 .venv/bin/python scripts/agent_loop_smoke.py              # agent loop, no tokens spent
 .venv/bin/python notebooks/ingest_embeddings.py           # embed any backlog
+python scripts/record_demo.py http://localhost:8000       # re-record docs/demo.gif (pip install playwright pillow)
 
 cd web && npm install && npm run build                    # console -> ../static
 ```

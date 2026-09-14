@@ -33,6 +33,9 @@ const TOOL_LABEL: Record<string, string> = {
   list_learning_context: "looked up your goals",
 };
 
+const BULLET = /^\s*([-*•]|\d+[.)])\s+/;
+const CITATION = /(\[(?:W|N)\d+\])/g;
+
 export default function Copilot({ goal, enabled, open, onClose, onChanged, onOpenPaper }: Props) {
   const [messages, setMessages] = useState<Message[]>([]);
   const [draft, setDraft] = useState("");
@@ -130,35 +133,65 @@ function Answer({ message, onOpenPaper }: { message: Message; onOpenPaper: (id: 
   const unverified = new Set(response?.unverified_citations ?? []);
   const tools = [...new Set((response?.tool_calls ?? []).map((t) => TOOL_LABEL[t.tool] ?? t.tool))];
 
-  const renderInline = (text: string) =>
-    text.split(/(\[(?:W|N)\d+\])/g).map((part, i) => {
-      const match = part.match(/^\[((?:W|N)\d+)\]$/);
-      if (!match) return <Fragment key={i}>{part}</Fragment>;
-      const key = match[1];
-      const citation = verified.get(key);
-      return (
-        <button key={i} type="button" className={`cite${unverified.has(key) ? " cite-unverified" : ""}`}
-                title={citation?.title ?? "This source was not found in what the copilot retrieved"}
-                aria-expanded={active === key}
-                onClick={() => (citation?.kind === "paper" ? onOpenPaper(key) : setActive(active === key ? null : key))}
-                onMouseEnter={() => setActive(key)} onMouseLeave={() => setActive(null)}>
-          {key}
-        </button>
-      );
+  const renderCitation = (key: string, id: string) => {
+    const citation = verified.get(key);
+    return (
+      <button key={id} type="button" className={`cite${unverified.has(key) ? " cite-unverified" : ""}`}
+              title={citation?.title ?? "This source was not found in what the copilot retrieved"}
+              aria-expanded={active === key}
+              onClick={() => (citation?.kind === "paper" ? onOpenPaper(key) : setActive(active === key ? null : key))}
+              onMouseEnter={() => setActive(key)} onMouseLeave={() => setActive(null)}>
+        {key}
+      </button>
+    );
+  };
+
+  // Citations first, then **bold**, *italic* and `code` inside the remaining
+  // text. The model writes light Markdown; anything else passes through as
+  // plain text. Italic needs a non-space right after the opening asterisk, so a
+  // stray "2 * 3" is not swallowed.
+  const renderInline = (text: string, keyPrefix: string) =>
+    text.split(CITATION).map((part, i) => {
+      const citation = part.match(/^\[((?:W|N)\d+)\]$/);
+      if (citation) return renderCitation(citation[1], `${keyPrefix}-c${i}`);
+      return part.split(/(\*\*[^*]+\*\*|\*[^\s*][^*]*\*|`[^`]+`)/g).map((piece, j) => {
+        const id = `${keyPrefix}-${i}-${j}`;
+        if (/^\*\*[^*]+\*\*$/.test(piece)) return <strong key={id}>{piece.slice(2, -2)}</strong>;
+        if (/^\*[^\s*][^*]*\*$/.test(piece)) return <em key={id}>{piece.slice(1, -1)}</em>;
+        if (/^`[^`]+`$/.test(piece)) return <code key={id}>{piece.slice(1, -1)}</code>;
+        return <Fragment key={id}>{piece}</Fragment>;
+      });
     });
 
-  const blocks = message.content.split(/\n{2,}/);
+  // A block can mix a lead-in line with bullets ("How they compare:\n- a\n- b"),
+  // so consecutive bullet lines are grouped into one list and every other line
+  // becomes its own paragraph - rather than requiring the whole block to be a list.
+  const renderBlock = (block: string, b: number) => {
+    const out: React.ReactNode[] = [];
+    let items: string[] = [];
+    let ordered = false;
+    const flush = () => {
+      if (!items.length) return;
+      const lis = items.map((item, j) => <li key={j}>{renderInline(item, `b${b}-l${out.length}-${j}`)}</li>);
+      out.push(ordered ? <ol key={`l${out.length}`}>{lis}</ol> : <ul key={`l${out.length}`}>{lis}</ul>);
+      items = [];
+    };
+    block.split("\n").forEach((line) => {
+      if (BULLET.test(line)) {
+        if (!items.length) ordered = /^\s*\d/.test(line);
+        items.push(line.replace(BULLET, ""));
+      } else if (line.trim()) {
+        flush();
+        out.push(<p key={`p${out.length}`}>{renderInline(line, `b${b}-p${out.length}`)}</p>);
+      }
+    });
+    flush();
+    return <Fragment key={b}>{out}</Fragment>;
+  };
+
   return (
     <div className="turn-assistant">
-      {blocks.map((block, i) => {
-        const lines = block.split("\n");
-        if (lines.every((l) => /^\s*([-*]|\d+\.)\s+/.test(l))) {
-          const ordered = /^\s*\d+\./.test(lines[0]);
-          const items = lines.map((l, j) => <li key={j}>{renderInline(l.replace(/^\s*([-*]|\d+\.)\s+/, ""))}</li>);
-          return ordered ? <ol key={i}>{items}</ol> : <ul key={i}>{items}</ul>;
-        }
-        return <p key={i}>{renderInline(block.replace(/\*\*(.+?)\*\*/g, "$1"))}</p>;
-      })}
+      {message.content.split(/\n{2,}/).map(renderBlock)}
 
       {(verified.size > 0 || unverified.size > 0) && (
         <div className="sources">

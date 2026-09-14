@@ -72,10 +72,16 @@ def import_papers(client: OpenAlexClient, work_ids: list[str], *,
     result = store.upsert_works(works)
     imported = [w["paper"]["id"] for w in works]
 
-    content = {"fetched": [], "unavailable": [], "skipped_no_key": not client.api_key}
+    content = {"fetched": [], "already_stored": [], "unavailable": [], "skipped_no_key": not client.api_key}
     if fetch_content and client.api_key:
+        # Papers are shared across users, so the second learner to save a
+        # paper must not pay another 100 credits for text already in Lakebase.
+        stored = set(store.paper_ids_with_content([w["paper"]["id"] for w in works]))
         for work in works:
             paper = work["paper"]
+            if paper["id"] in stored:
+                content["already_stored"].append(paper["id"])
+                continue
             if not paper.get("has_content"):
                 content["unavailable"].append(paper["id"])
                 continue

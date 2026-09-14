@@ -103,6 +103,20 @@ The URL is behind Databricks OAuth, so the test attaches your CLI credentials.
 In a browser, sign in to the workspace first. The user isolation checks run locally
 only, because the platform sets `X-Forwarded-Email` and a client cannot spoof it.
 
+## Pause and resume
+
+Stopping keeps all data, secrets and the deployment. The update mask (`stopped`) is
+a required positional argument; without it the CLI rejects the call.
+
+```bash
+databricks apps stop research-copilot
+databricks database update-database-instance copilot-db stopped --stopped
+
+# resume: start the database first, so the app's startup schema check can connect
+databricks database update-database-instance copilot-db stopped --stopped=false
+databricks apps start research-copilot
+```
+
 ## Teardown
 
 ```bash

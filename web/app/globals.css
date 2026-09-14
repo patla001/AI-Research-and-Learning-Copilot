@@ -230,6 +230,8 @@ textarea.field { resize: vertical; min-height: 64px; }
 .turn-assistant { font-family: var(--reading); font-size: 0.97rem; line-height: 1.6; }
 .turn-assistant p { margin: 0 0 10px; }
 .turn-assistant ul, .turn-assistant ol { margin: 0 0 10px; padding-left: 20px; }
+.turn-assistant li { margin-bottom: 4px; }
+.turn-assistant code { font-family: var(--ui); font-size: 0.85em; background: var(--rule-soft); border-radius: 3px; padding: 0 4px; }
 .turn-trace { font-family: var(--ui); font-size: 0.8rem; color: var(--faint); margin-top: 4px; }
 
 /* Citations are the only yellow on the page: a highlighter pass over the key. */

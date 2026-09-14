@@ -144,9 +144,11 @@ def main(base: str, run_chat: bool) -> int:
     else:
         r = s.post(f"{base}/papers/import", json={"paper_ids": with_content, "fetch_content": True}, timeout=600)
         content = js(r).get("content") or {}
-        fetched = [c["id"] for c in content.get("fetched") or []]
-        check(r.status_code == 200 and fetched == with_content, "full text fetched with the OpenAlex key",
-              str(content)[:200])
+        # A paper saved by an earlier run already has its text; import reports
+        # it as already_stored instead of paying for it again.
+        have_text = [c["id"] for c in content.get("fetched") or []] + (content.get("already_stored") or [])
+        check(r.status_code == 200 and have_text == with_content,
+              "full text fetched (or already stored) with the OpenAlex key", str(content)[:200])
         chars = sql_one("SELECT length(content_text) AS n FROM papers WHERE id = %s", (with_content[0],)).get("n") or 0
         check(chars > 1000, "  content_text stored in Lakebase", f"{chars} chars")
         chunks = sql_one("""SELECT COUNT(*) AS n FROM context_chunks

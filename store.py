@@ -290,6 +290,16 @@ def get_papers(paper_ids: list[str]) -> list[dict]:
     return sorted(rows, key=lambda r: order.get(r["id"], len(order)))
 
 
+def paper_ids_with_content(paper_ids: list[str]) -> list[str]:
+    """Which of these papers already have full text stored."""
+    if not paper_ids:
+        return []
+    rows = lakebase.run_query(
+        "SELECT id FROM papers WHERE id = ANY(%s) AND content_text IS NOT NULL", (list(paper_ids),)
+    )
+    return [r["id"] for r in rows]
+
+
 def get_paper(paper_id: str, user_id: int | None = None) -> dict:
     rows = lakebase.run_query(
         _PAPER_SUMMARY_SQL.replace("p.referenced_works,", "p.referenced_works, p.abstract, p.topics,")
