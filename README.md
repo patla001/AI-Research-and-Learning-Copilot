@@ -9,7 +9,7 @@ You set a learning goal, and it:
 - **tracks your progress** and recommends what to read next,
 - lets you **ask a Claude-powered copilot** to find, summarize and compare papers. Its answers cite the papers they come from, and every citation is checked.
 
-![Demo: create a goal, find and save papers, build a reading plan, track progress, and ask the copilot](docs/demo.gif)
+![Demo: create a goal, find and save papers, build a reading plan, track progress, and ask the copilot](https://raw.githubusercontent.com/patla001/AI-Research-and-Learning-Copilot/main/docs/demo.gif)
 
 *Recorded on the live Databricks App, with Lakebase `copilot-db`, OpenAlex and Claude.
 `scripts/record_demo.py` re-records it.*

@@ -41,6 +41,8 @@ def test_reconstruct_abstract_orders_repeated_words():
     assert reconstruct_abstract({}) is None
 
 
+@pytest.mark.skipif(not os.path.exists(FIXTURE),
+                    reason="fixture left out of the slim submission bundle; it is in the GitHub repo")
 def test_normalize_live_work_fixture():
     raw = json.load(open(FIXTURE))
     work = normalize_work(raw)
