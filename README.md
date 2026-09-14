@@ -171,9 +171,23 @@ A manual tool-use loop (`agent.py`) over 11 tools (`agent_tools.py`), on `claude
 | `test_deployment.py` against the app on Postgres 16 + pgvector 0.8 (Docker): every write checked through the API **and** in SQL, idempotent re-import, plan persistence, progress, scoped retrieval, note retrieval, cross-user isolation, edge cases | **44 passed, 0 failed** |
 | `scripts/agent_loop_smoke.py`: the real agent loop against a stub Messages API and the local database. Checks the fallback header and body, thinking, effort, cache markers, byte-stable tools, `tool_result` round trip, thinking echo, verified vs. invented citations | **20 passed, 0 failed** |
 
-**Not yet verified:** a real Claude call (no `ANTHROPIC_API_KEY` was available while
-building), full-text import (no `OPENALEX_API_KEY`), and the Databricks Apps
-deployment. `test_deployment.py <url> --chat` covers the first once a key is set.
+### Deployed
+
+The app runs on Databricks Apps as `research-copilot`, backed by its own Lakebase instance
+`copilot-db` (PG 16, pgvector 0.8.0). `scripts/bootstrap_lakebase.py` created the role,
+extension, schema and secret. See [DEPLOY.md](DEPLOY.md).
+
+| Check | Result |
+|---|---|
+| `test_deployment.py` against the local app on **Lakebase** `copilot-db` (TLS, `copilot_app` role) | **44 passed, 0 failed** |
+| `test_deployment.py https://research-copilot-2808874854650870.aws.databricksapps.com --chat`: the full suite through the Databricks OAuth proxy, identity from `X-Forwarded-Email`, **plus a real Claude request** | **45 passed, 0 failed**. The agent called `retrieve_evidence`, and its answer carried 5 verified citations and 0 unverified |
+
+The app is behind Databricks OAuth, so a viewer needs a workspace identity. The
+cross-user isolation checks run locally only, because on Databricks Apps the platform
+sets `X-Forwarded-Email` and a client cannot spoof it.
+
+**Still not verified:** full-text import, which needs `OPENALEX_API_KEY`. Without the
+key the app runs on the keyless OpenAlex budget with abstracts only.
 
 ---
 

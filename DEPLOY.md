@@ -1,20 +1,27 @@
 # Deploying to Databricks Apps
 
-Runbook adapted from the weather retrieval service, which was deployed with these
-exact steps. **This app has not been deployed yet.** Fill in the "What is deployed"
-table as you go.
+Runbook for `dbc-7e085092-52e4.cloud.databricks.com`. The values below are what
+was actually deployed.
 
 **Step 1 starts billing** (the Lakebase instance). App compute in step 4 bills
-separately. Stop the instance when you are not using it.
+separately. Stop both when you are not using them (see Teardown).
 
 | | |
 |---|---|
-| Lakebase instance | `copilot-db` |
-| Postgres role | `copilot_app` |
-| Secrets | `database/copilot-lakebase-url`, `database/anthropic-api-key`, `database/openalex-api-key` |
-| App | `research-copilot` |
-| App URL | _after step 4_ |
-| Verification | _`test_deployment.py` result_ |
+| Lakebase instance | `copilot-db`: CU_1, PG 16, pgvector 0.8.0, native login on |
+| Instance host | `ep-old-rain-d1mk3m3q.database.us-west-2.cloud.databricks.com` |
+| Postgres role | `copilot_app`, which owns all 10 tables (created by `scripts/bootstrap_lakebase.py`) |
+| Secrets | `database/copilot-lakebase-url`, `database/anthropic-api-key` (`openalex-api-key` not yet created) |
+| App | `research-copilot` (service principal READ on scope `database`) |
+| App URL | `https://research-copilot-2808874854650870.aws.databricksapps.com` |
+| Deployment | `01f1b047de6d1c519ce0e2e72ff414f6`, SUCCEEDED ("App started successfully") |
+| Verification | `test_deployment.py <url> --chat`: **45 passed, 0 failed**, including a real Claude request with 5 verified citations |
+
+> **Shortcut for steps 1b-3:** once the instance is AVAILABLE,
+> `python scripts/bootstrap_lakebase.py --instance copilot-db --write-env` creates the
+> role, enables pgvector, applies `sql/01`–`02` as the app role, stores the secret and
+> writes `.env`. It connects as you with a short-lived OAuth credential and never prints
+> the generated password.
 
 ---
 
