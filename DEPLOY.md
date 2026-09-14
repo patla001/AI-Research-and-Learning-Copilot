@@ -113,9 +113,15 @@ databricks apps stop research-copilot
 databricks database update-database-instance copilot-db stopped --stopped
 
 # resume: start the database first, so the app's startup schema check can connect
-databricks database update-database-instance copilot-db stopped --stopped=false
+databricks database update-database-instance copilot-db stopped --json '{"stopped": false}'
 databricks apps start research-copilot
 ```
+
+> `--stopped=false` does **not** resume the instance: the CLI drops a false boolean
+> flag from the request body, so the update is a no-op and the instance stays
+> STOPPED. Send the value explicitly with `--json`, as above. `apps start` also
+> redeploys from the app's source code path, so code synced while the app was
+> stopped goes live on start.
 
 ## Teardown
 

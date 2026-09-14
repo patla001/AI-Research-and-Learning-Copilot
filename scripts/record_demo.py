@@ -75,13 +75,30 @@ def main(base: str) -> int:
     with sync_playwright() as p:
         browser = p.chromium.launch(channel="chrome", headless=True)
         context = browser.new_context(viewport=VIEWPORT, device_scale_factor=1)
-        context.set_extra_http_headers({"X-Forwarded-Email": f"demo-{int(time.time())}@example.edu"})
+        if "databricksapps.com" in base:
+            # Production sits behind the Databricks Apps OAuth proxy, which checks
+            # every request - the page, its /static assets and each API call. The
+            # CLI's OAuth token goes on all of them; the proxy then sets
+            # X-Forwarded-Email itself, so the demo runs as the signed-in user.
+            from databricks.sdk import WorkspaceClient
+
+            context.set_extra_http_headers(WorkspaceClient().config.authenticate())
+        else:
+            # Locally there is no proxy: send the header it would have set, for a
+            # fresh user, so the recording always starts from an empty library.
+            context.set_extra_http_headers({"X-Forwarded-Email": f"demo-{int(time.time())}@example.edu"})
         page = context.new_page()
         page.set_default_timeout(60_000)
 
         # 1. goal
         page.goto(base)
+        page.wait_for_load_state("networkidle")
+        if "Sign in" in page.title() or "login" in page.url:
+            raise SystemExit(f"Got a sign-in page at {page.url} - the token was not accepted.")
         goal_input = page.get_by_placeholder("What do you want to learn?")
+        if not goal_input.is_visible():
+            # A user who already has goals sees the rail, not the form.
+            page.get_by_role("button", name="New goal").click()
         expect(goal_input).to_be_visible()
         capture(page, "Start with a learning goal", 1800)
         goal_input.fill(GOAL)

@@ -11,6 +11,9 @@ You set a learning goal, and it:
 
 ![Demo: create a goal, find and save papers, build a reading plan, track progress, and ask the copilot](docs/demo.gif)
 
+*Recorded on the live Databricks App, with Lakebase `copilot-db`, OpenAlex and Claude.
+`scripts/record_demo.py` re-records it.*
+
 **Live app:** [research-copilot on Databricks Apps](https://research-copilot-2808874854650870.aws.databricksapps.com)
 
 > The app sits behind Databricks sign-in, so you need an account in the workspace. To keep costs down,
