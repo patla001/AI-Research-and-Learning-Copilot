@@ -1,0 +1,12 @@
+[project]
+name = "research-learning-copilot"
+version = "0.1.0"
+description = "AI Research and Learning Copilot: OpenAlex -> Lakebase pgvector -> Claude agent"
+requires-python = ">=3.11"
+
+# Dependencies live in requirements.txt - that is the file Databricks Apps
+# installs from, so keeping a second list here would only invite drift.
+dependencies = []
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]

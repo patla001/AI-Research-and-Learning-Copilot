@@ -1,0 +1,680 @@
+{
+ "id": "https://openalex.org/W4389984066",
+ "doi": "https://doi.org/10.48550/arxiv.2312.10997",
+ "display_name": "Retrieval-Augmented Generation for Large Language Models: A Survey",
+ "publication_year": 2023,
+ "publication_date": "2023-12-18",
+ "type": "preprint",
+ "language": "en",
+ "cited_by_count": 734,
+ "open_access": {
+  "is_oa": true,
+  "oa_status": "green",
+  "oa_url": "https://arxiv.org/pdf/2312.10997",
+  "any_repository_has_fulltext": true
+ },
+ "primary_location": {
+  "id": "pmh:oai:arXiv.org:2312.10997",
+  "is_oa": true,
+  "landing_page_url": "http://arxiv.org/abs/2312.10997",
+  "pdf_url": "https://arxiv.org/pdf/2312.10997",
+  "source": {
+   "id": "https://openalex.org/S4306400194",
+   "display_name": "arXiv (Cornell University)",
+   "issn_l": "2331-8422",
+   "issn": [
+    "2331-8422"
+   ],
+   "is_oa": true,
+   "is_in_doaj": false,
+   "is_core": false,
+   "host_organization": "https://openalex.org/I205783295",
+   "host_organization_name": "Cornell University",
+   "host_organization_lineage": [
+    "https://openalex.org/I205783295"
+   ],
+   "host_organization_lineage_names": [],
+   "type": "repository"
+  },
+  "license": null,
+  "license_id": null,
+  "version": "submittedVersion",
+  "is_accepted": false,
+  "is_published": false,
+  "raw_source_name": null,
+  "raw_type": "text"
+ },
+ "primary_topic": {
+  "id": "https://openalex.org/T10028",
+  "display_name": "Topic Modeling",
+  "score": 0.9979000091552734,
+  "subfield": {
+   "id": "https://openalex.org/subfields/1702",
+   "display_name": "Artificial Intelligence"
+  },
+  "field": {
+   "id": "https://openalex.org/fields/17",
+   "display_name": "Computer Science"
+  },
+  "domain": {
+   "id": "https://openalex.org/domains/3",
+   "display_name": "Physical Sciences"
+  }
+ },
+ "topics": [
+  {
+   "id": "https://openalex.org/T10028",
+   "display_name": "Topic Modeling",
+   "score": 0.9979000091552734,
+   "subfield": {
+    "id": "https://openalex.org/subfields/1702",
+    "display_name": "Artificial Intelligence"
+   },
+   "field": {
+    "id": "https://openalex.org/fields/17",
+    "display_name": "Computer Science"
+   },
+   "domain": {
+    "id": "https://openalex.org/domains/3",
+    "display_name": "Physical Sciences"
+   }
+  },
+  {
+   "id": "https://openalex.org/T10181",
+   "display_name": "Natural Language Processing Techniques",
+   "score": 0.9476000070571899,
+   "subfield": {
+    "id": "https://openalex.org/subfields/1702",
+    "display_name": "Artificial Intelligence"
+   },
+   "field": {
+    "id": "https://openalex.org/fields/17",
+    "display_name": "Computer Science"
+   },
+   "domain": {
+    "id": "https://openalex.org/domains/3",
+    "display_name": "Physical Sciences"
+   }
+  }
+ ],
+ "abstract_inverted_index": {
+  "Large": [
+   0
+  ],
+  "Language": [
+   1
+  ],
+  "Models": [
+   2
+  ],
+  "(LLMs)": [
+   3
+  ],
+  "showcase": [
+   4
+  ],
+  "impressive": [
+   5
+  ],
+  "capabilities": [
+   6
+  ],
+  "but": [
+   7
+  ],
+  "encounter": [
+   8
+  ],
+  "challenges": [
+   9,
+   155
+  ],
+  "like": [
+   10
+  ],
+  "hallucination,": [
+   11
+  ],
+  "outdated": [
+   12
+  ],
+  "knowledge,": [
+   13
+  ],
+  "and": [
+   14,
+   38,
+   47,
+   53,
+   93,
+   112,
+   146,
+   158,
+   165
+  ],
+  "non-transparent,": [
+   15
+  ],
+  "untraceable": [
+   16
+  ],
+  "reasoning": [
+   17
+  ],
+  "processes.": [
+   18
+  ],
+  "Retrieval-Augmented": [
+   19
+  ],
+  "Generation": [
+   20
+  ],
+  "(RAG)": [
+   21
+  ],
+  "has": [
+   22
+  ],
+  "emerged": [
+   23
+  ],
+  "as": [
+   24
+  ],
+  "a": [
+   25,
+   77,
+   130
+  ],
+  "promising": [
+   26
+  ],
+  "solution": [
+   27
+  ],
+  "by": [
+   28
+  ],
+  "incorporating": [
+   29
+  ],
+  "knowledge": [
+   30,
+   51,
+   63
+  ],
+  "from": [
+   31
+  ],
+  "external": [
+   32,
+   70
+  ],
+  "databases.": [
+   33,
+   71
+  ],
+  "This": [
+   34,
+   72
+  ],
+  "enhances": [
+   35
+  ],
+  "the": [
+   36,
+   41,
+   65,
+   81,
+   87,
+   90,
+   94,
+   100,
+   108,
+   110,
+   113,
+   119,
+   134,
+   149,
+   154
+  ],
+  "accuracy": [
+   37
+  ],
+  "credibility": [
+   39
+  ],
+  "of": [
+   40,
+   55,
+   69,
+   80,
+   83,
+   103,
+   125,
+   133
+  ],
+  "generation,": [
+   42
+  ],
+  "particularly": [
+   43
+  ],
+  "for": [
+   44,
+   49,
+   163
+  ],
+  "knowledge-intensive": [
+   45
+  ],
+  "tasks,": [
+   46
+  ],
+  "allows": [
+   48
+  ],
+  "continuous": [
+   50
+  ],
+  "updates": [
+   52
+  ],
+  "integration": [
+   54
+  ],
+  "domain-specific": [
+   56
+  ],
+  "information.": [
+   57
+  ],
+  "RAG": [
+   58,
+   84,
+   104,
+   137
+  ],
+  "synergistically": [
+   59
+  ],
+  "merges": [
+   60
+  ],
+  "LLMs'": [
+   61
+  ],
+  "intrinsic": [
+   62
+  ],
+  "with": [
+   64
+  ],
+  "vast,": [
+   66
+  ],
+  "dynamic": [
+   67
+  ],
+  "repositories": [
+   68
+  ],
+  "comprehensive": [
+   73
+  ],
+  "review": [
+   74
+  ],
+  "paper": [
+   75,
+   117,
+   141
+  ],
+  "offers": [
+   76
+  ],
+  "detailed": [
+   78
+  ],
+  "examination": [
+   79
+  ],
+  "progression": [
+   82
+  ],
+  "paradigms,": [
+   85
+  ],
+  "encompassing": [
+   86
+  ],
+  "Naive": [
+   88
+  ],
+  "RAG,": [
+   89,
+   92
+  ],
+  "Advanced": [
+   91
+  ],
+  "Modular": [
+   95
+  ],
+  "RAG.": [
+   96
+  ],
+  "It": [
+   97
+  ],
+  "meticulously": [
+   98
+  ],
+  "scrutinizes": [
+   99
+  ],
+  "tripartite": [
+   101
+  ],
+  "foundation": [
+   102
+  ],
+  "frameworks,": [
+   105
+  ],
+  "which": [
+   106
+  ],
+  "includes": [
+   107
+  ],
+  "retrieval,": [
+   109
+  ],
+  "generation": [
+   111
+  ],
+  "augmentation": [
+   114
+  ],
+  "techniques.": [
+   115
+  ],
+  "The": [
+   116
+  ],
+  "highlights": [
+   118
+  ],
+  "state-of-the-art": [
+   120
+  ],
+  "technologies": [
+   121
+  ],
+  "embedded": [
+   122
+  ],
+  "in": [
+   123,
+   136
+  ],
+  "each": [
+   124
+  ],
+  "these": [
+   126
+  ],
+  "critical": [
+   127
+  ],
+  "components,": [
+   128
+  ],
+  "providing": [
+   129
+  ],
+  "profound": [
+   131
+  ],
+  "understanding": [
+   132
+  ],
+  "advancements": [
+   135
+  ],
+  "systems.": [
+   138
+  ],
+  "Furthermore,": [
+   139
+  ],
+  "this": [
+   140,
+   151
+  ],
+  "introduces": [
+   142
+  ],
+  "up-to-date": [
+   143
+  ],
+  "evaluation": [
+   144
+  ],
+  "framework": [
+   145
+  ],
+  "benchmark.": [
+   147
+  ],
+  "At": [
+   148
+  ],
+  "end,": [
+   150
+  ],
+  "article": [
+   152
+  ],
+  "delineates": [
+   153
+  ],
+  "currently": [
+   156
+  ],
+  "faced": [
+   157
+  ],
+  "points": [
+   159
+  ],
+  "out": [
+   160
+  ],
+  "prospective": [
+   161
+  ],
+  "avenues": [
+   162
+  ],
+  "research": [
+   164
+  ],
+  "development.": [
+   166
+  ]
+ },
+ "authorships": [
+  {
+   "author_position": "first",
+   "author": {
+    "id": "https://openalex.org/A5102001778",
+    "display_name": "Yunfan Gao",
+    "orcid": "https://orcid.org/0000-0002-7932-2752"
+   },
+   "institutions": [],
+   "countries": [],
+   "is_corresponding": false,
+   "raw_author_name": "Gao, Yunfan",
+   "raw_affiliation_strings": [],
+   "raw_orcid": null,
+   "affiliations": []
+  },
+  {
+   "author_position": "middle",
+   "author": {
+    "id": "https://openalex.org/A5001877137",
+    "display_name": "Yun Xiong",
+    "orcid": "https://orcid.org/0000-0002-8575-5415"
+   },
+   "institutions": [],
+   "countries": [],
+   "is_corresponding": false,
+   "raw_author_name": "Xiong, Yun",
+   "raw_affiliation_strings": [],
+   "raw_orcid": null,
+   "affiliations": []
+  },
+  {
+   "author_position": "middle",
+   "author": {
+    "id": "https://openalex.org/A5101581913",
+    "display_name": "Xinyu Gao",
+    "orcid": "https://orcid.org/0000-0001-7654-3800"
+   },
+   "institutions": [],
+   "countries": [],
+   "is_corresponding": false,
+   "raw_author_name": "Gao, Xinyu",
+   "raw_affiliation_strings": [],
+   "raw_orcid": null,
+   "affiliations": []
+  },
+  {
+   "author_position": "middle",
+   "author": {
+    "id": "https://openalex.org/A5109666673",
+    "display_name": "Kangxiang Jia",
+    "orcid": "https://orcid.org/0009-0001-0054-5049"
+   },
+   "institutions": [],
+   "countries": [],
+   "is_corresponding": false,
+   "raw_author_name": "Jia, Kangxiang",
+   "raw_affiliation_strings": [],
+   "raw_orcid": null,
+   "affiliations": []
+  },
+  {
+   "author_position": "middle",
+   "author": {
+    "id": "https://openalex.org/A5104217086",
+    "display_name": "Jinliu Pan",
+    "orcid": null
+   },
+   "institutions": [],
+   "countries": [],
+   "is_corresponding": false,
+   "raw_author_name": "Pan, Jinliu",
+   "raw_affiliation_strings": [],
+   "raw_orcid": null,
+   "affiliations": []
+  },
+  {
+   "author_position": "middle",
+   "author": {
+    "id": "https://openalex.org/A5104217087",
+    "display_name": "Yuxi Bi",
+    "orcid": null
+   },
+   "institutions": [],
+   "countries": [],
+   "is_corresponding": false,
+   "raw_author_name": "Bi, Yuxi",
+   "raw_affiliation_strings": [],
+   "raw_orcid": null,
+   "affiliations": []
+  },
+  {
+   "author_position": "middle",
+   "author": {
+    "id": "https://openalex.org/A5100647639",
+    "display_name": "Yi Dai",
+    "orcid": "https://orcid.org/0000-0003-1219-2436"
+   },
+   "institutions": [],
+   "countries": [],
+   "is_corresponding": false,
+   "raw_author_name": "Dai, Yi",
+   "raw_affiliation_strings": [],
+   "raw_orcid": null,
+   "affiliations": []
+  },
+  {
+   "author_position": "middle",
+   "author": {
+    "id": "https://openalex.org/A5101598822",
+    "display_name": "Jiawei Sun",
+    "orcid": "https://orcid.org/0000-0003-1332-6758"
+   },
+   "institutions": [],
+   "countries": [],
+   "is_corresponding": false,
+   "raw_author_name": "Sun, Jiawei",
+   "raw_affiliation_strings": [],
+   "raw_orcid": null,
+   "affiliations": []
+  },
+  {
+   "author_position": "middle",
+   "author": {
+    "id": null,
+    "display_name": "Wang, Meng",
+    "orcid": null
+   },
+   "institutions": [],
+   "countries": [],
+   "is_corresponding": false,
+   "raw_author_name": "Wang, Meng",
+   "raw_affiliation_strings": [],
+   "raw_orcid": null,
+   "affiliations": []
+  },
+  {
+   "author_position": "last",
+   "author": {
+    "id": null,
+    "display_name": "Wang, Haofen",
+    "orcid": null
+   },
+   "institutions": [],
+   "countries": [],
+   "is_corresponding": false,
+   "raw_author_name": "Wang, Haofen",
+   "raw_affiliation_strings": [],
+   "raw_orcid": null,
+   "affiliations": []
+  }
+ ],
+ "referenced_works": [],
+ "related_works": [
+  "https://openalex.org/W2388687352",
+  "https://openalex.org/W2370187191",
+  "https://openalex.org/W1990162851",
+  "https://openalex.org/W2369854048",
+  "https://openalex.org/W2374291020",
+  "https://openalex.org/W2355907197",
+  "https://openalex.org/W3171042291",
+  "https://openalex.org/W2390961115",
+  "https://openalex.org/W2388138913",
+  "https://openalex.org/W3088304681"
+ ],
+ "has_content": {
+  "pdf": true,
+  "grobid_xml": true
+ },
+ "is_retracted": false,
+ "is_paratext": false
+}

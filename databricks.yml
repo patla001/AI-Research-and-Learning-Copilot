@@ -1,0 +1,18 @@
+# Databricks Asset Bundle for the research copilot.
+#
+# `workspace.host` is deliberately omitted: a placeholder host here is picked up
+# by every `databricks` CLI command run from this directory. Set it per
+# invocation with `--profile` or DATABRICKS_HOST instead.
+
+bundle:
+  name: research-learning-copilot
+
+targets:
+  dev:
+    mode: development
+    default: true
+
+  prod:
+    mode: production
+    workspace:
+      root_path: /Shared/.bundle/${bundle.name}/${bundle.target}

@@ -1,0 +1,57 @@
+command:
+  - "python"
+  - "app.py"
+
+env:
+  # --- Secrets, injected as app RESOURCES (not secret scopes) -----------------
+  # Attach on the app's page under Resources, or with `databricks apps update`
+  # (see DEPLOY.md):
+  #
+  #   | resource key         | scope    | key                  |
+  #   |----------------------|----------|----------------------|
+  #   | copilot-lakebase-url | database | copilot-lakebase-url |
+  #   | anthropic-api-key    | database | anthropic-api-key    |
+  #   | openalex-api-key     | database | openalex-api-key     |
+  #
+  # A detached resource resolves to an empty string. Lakebase then falls back to
+  # the SDK secret path below; a missing Anthropic key turns only the copilot
+  # off; a missing OpenAlex key drops to the keyless budget (no full text).
+  - name: LAKEBASE_URL
+    valueFrom: copilot-lakebase-url
+  - name: ANTHROPIC_API_KEY
+    valueFrom: anthropic-api-key
+  - name: OPENALEX_API_KEY
+    valueFrom: openalex-api-key
+
+  - name: LAKEBASE_SECRET_SCOPE
+    value: "database"
+  - name: LAKEBASE_SECRET_KEY
+    value: "copilot-lakebase-url"
+
+  # --- OpenAlex ----------------------------------------------------------------
+  - name: OPENALEX_MAILTO
+    value: "epatlan1742@sdsu.edu"
+  # Full text costs 100 credits per saved paper. Set "false" to save abstracts only.
+  - name: COPILOT_FETCH_CONTENT
+    value: "true"
+
+  # --- Embeddings --------------------------------------------------------------
+  - name: COPILOT_EMBED_MODEL
+    value: "BAAI/bge-small-en-v1.5"
+  - name: FASTEMBED_CACHE_PATH
+    value: "/tmp/.cache/fastembed"
+
+  # --- Agent guardrails ---------------------------------------------------------
+  # The copilot is the only per-request cost. Also set a spend limit in the
+  # Anthropic Console: an in-process ceiling cannot help if the process is the bug.
+  - name: COPILOT_MODEL
+    value: "claude-opus-5"
+  - name: COPILOT_EFFORT
+    value: "medium"
+  - name: COPILOT_MAX_TURNS
+    value: "10"
+  - name: COPILOT_DAILY_LIMIT
+    value: "200"
+
+  - name: FLASK_DEBUG
+    value: "0"

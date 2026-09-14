@@ -1,0 +1,38 @@
+# Secrets - never commit a filled-in environment file
+.env
+.env.*
+!.env.example
+.envrc
+.databrickscfg
+.pgpass
+*.pgpass
+# The Lakebase DSN carries the role password inline.
+*connection*url*
+*.log
+*.pem
+*.key
+
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+.pytest_cache/
+.ruff_cache/
+
+# fastembed model cache
+.cache/
+
+# Databricks CLI sync state
+.databricks/
+
+# Editors / OS
+.DS_Store
+.idea/
+.vscode/
+*.swp
+
+# static/ is deliberately NOT ignored: it is the built console. A Databricks
+# App has no Node runtime, so the export is built locally and committed.
+# Rebuild with `cd web && npm run build`.

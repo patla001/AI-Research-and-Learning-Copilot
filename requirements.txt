@@ -1,0 +1,18 @@
+databricks-sdk>=0.30.0
+psycopg2-binary>=2.9.9
+sqlalchemy>=2.0.30
+flask>=3.0.3
+requests>=2.32.3
+python-dotenv>=1.0.1
+# Embeddings for context engineering: BAAI/bge-small-en-v1.5 (384 dims) via ONNX
+# on CPU. Same reasoning as the weather app: no ~2.5 GB of torch in a Databricks
+# App container. Used on BOTH the ingest and the query side so stored vectors
+# and query vectors always come from the same export.
+fastembed>=0.4.0
+# The copilot agent (tool-use loop). The rest of the app - discovery, collections,
+# progress, retrieval - works without it.
+anthropic>=0.40.0
+# Pure-Python Postgres driver for Databricks serverless job tasks, where
+# psycopg2-binary's bundled OpenSSL collides with the kernel's. Select with
+# COPILOT_DB_DRIVER=pg8000.
+pg8000>=1.31.0
